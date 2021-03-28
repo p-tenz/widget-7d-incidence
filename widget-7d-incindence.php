@@ -151,8 +151,46 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		</div>
 
 		
+		<div class="hexagon hexagon-with-border <?= $weeklyInc->css ?>">
+			<div class="hexagon-shape">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-shape content-panel">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-content">
+				<div class="content-title"><?= number_format($weeklyInc->value, 1) ?></div>
+				<div class="content-sub">7-day inc.</div>
+			</div>
+		</div>
 
-		<div class="c197di" style="margin: auto">
+		<div class="hexagon hexagon-with-border info">
+			<div class="hexagon-shape">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-shape content-panel">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-content">
+				<div class="content-title"><?= $weeklyInc->newCases ?></div>
+				<div class="content-sub">new cases</div>
+			</div>
+		</div>
+		<p>
+		Stand: <?= $weeklyInc->lastUpdate ?></br>
+		<a href="<?= $weeklyInc->metaInfo ?>" target="_blank">Thank you Marlon</a>
+		</p>
+
+
+		<!-- <div class="c197di" style="margin: auto">
    		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="173" height="153" viewbox="-5 -5 170 148.56406460551017 ">
 
    			<path fill="#000" d="M-5 69.28203230275508L38 -5L122 -5L165 69.28203230275508L122 143.56406460551017L38 143.56406460551017Z"></path>
@@ -172,7 +210,7 @@ class Covid19InzidenzAmpel extends WP_Widget {
               <?= round($ampelvalue2,1) ?>
               </text>
    		</svg>
-		</div>
+		</div> -->
 
 	
 		<?php
@@ -194,6 +232,8 @@ class WeeklyIncidence {
 	public $districtName;	// name of district
 	public $jsonResponse;	
 	public $value = 0.0;			// value of 7d incidence
+	public $newCases = 0;
+	public $css = "info";
 	public $lastUpdate;
 	public $metaInfo;
 
@@ -211,6 +251,17 @@ class WeeklyIncidence {
 		// 7-days incidence
 		$value = (float)($results->data->$key->weekIncidence);		
 		$this->value = round($value, 1);
+
+		// css
+		if ($value >= 50.0) {
+			$this->css = "warning";
+		}
+		if ($value >= 100.0) {
+			$this->css = "danger";
+		}
+
+		// new cases
+		$this->newCases = $results->data->$key->delta->cases;
 
 		// meta info
 		$a = $results->meta->lastUpdate;
