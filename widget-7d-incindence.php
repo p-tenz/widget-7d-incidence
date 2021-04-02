@@ -99,7 +99,8 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		$jsonResponse = $weeklyInc->jsonResponse;
 		//var_dump($jsonResponse);
 		$districtName = $weeklyInc->districtName;
-		$value = $weeklyInc->value;
+		//$value = $weeklyInc->value;
+		$values = $weeklyInc->values;
 
 		//print_r($districtName . $value);
 
@@ -124,8 +125,8 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		// $p1arr = $this->Gradient3($green,$yellow,$red,$p1g+1);
 		// $p2arr = $this->Gradient3($green,$yellow,$red,$p2g+1);
 
-		$ampelvalue1 = $weeklyInc->value;
-		$ampelvalue2 = $weeklyInc->value - 12.8;
+		$ampelvalue1 = $weeklyInc->values[0];
+		$ampelvalue2 = $weeklyInc->values[1];
 
 		$bordercol = "000";
 
@@ -150,8 +151,7 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		?>
 		</div>
 
-		
-		<div class="hexagon hexagon-with-border <?= $weeklyInc->css ?>">
+		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[2] ?>">
 			<div class="hexagon-shape">
 				<div class="hexagon-shape-inner">
 					<div class="hexagon-shape-inner-2"></div>
@@ -163,12 +163,12 @@ class Covid19InzidenzAmpel extends WP_Widget {
 				</div>
 			</div>
 			<div class="hexagon-content">
-				<div class="content-title"><?= number_format($weeklyInc->value, 1) ?></div>
-				<div class="content-sub">7-day inc.</div>
+				<div class="content-title"><?= number_format($weeklyInc->values[2], 1) ?></div>
+				<div class="content-sub">heute</div>
 			</div>
 		</div>
 
-		<div class="hexagon hexagon-with-border info">
+		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[0] ?>">
 			<div class="hexagon-shape">
 				<div class="hexagon-shape-inner">
 					<div class="hexagon-shape-inner-2"></div>
@@ -180,15 +180,45 @@ class Covid19InzidenzAmpel extends WP_Widget {
 				</div>
 			</div>
 			<div class="hexagon-content">
-				<div class="content-title"><?= $weeklyInc->newCases ?></div>
-				<div class="content-sub">new cases</div>
+				<div class="content-title"><?= number_format($weeklyInc->values[0], 1) ?></div>
+				<div class="content-sub">vorgestern</div>
 			</div>
 		</div>
+
+		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[1] ?>">
+			<div class="hexagon-shape">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-shape content-panel">
+				<div class="hexagon-shape-inner">
+					<div class="hexagon-shape-inner-2"></div>
+				</div>
+			</div>
+			<div class="hexagon-content">
+				<div class="content-title"><?= number_format($weeklyInc->values[1], 1) ?></div>
+				<div class="content-sub">gestern</div>
+			</div>
+		</div>
+
 		<p>
-		Stand: <?= $weeklyInc->lastUpdate ?></br>
+		heute = <?= $weeklyInc->lastUpdate ?></br>
 		<a href="<?= $weeklyInc->metaInfo ?>" target="_blank">Thank you Marlon</a>
 		</p>
 
+		<div class="container">
+  			<ol class="even">
+    			<li class='hex'>
+				</li>
+  			</ol>
+  			<ol class="odd">
+    			<li class='hex'>
+				</li>
+    			<li class='hex'>
+				</li>
+  			</ol>  
+		</div>
 
 		<!-- <div class="c197di" style="margin: auto">
    		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="173" height="153" viewbox="-5 -5 170 148.56406460551017 ">
@@ -231,9 +261,15 @@ class WeeklyIncidence {
 	public $districtKey = "08111";	// Stuttgart LK als default
 	public $districtName;	// name of district
 	public $jsonResponse;	
-	public $value = 0.0;			// value of 7d incidence
-	public $newCases = 0;
+	public $value = 0.0;			// values of 7d incidence
 	public $css = "info";
+
+	// incidence values for day-before-yesterday, yesterday, today
+	public $values = array(0.0, 0.0, 0.0);
+	// css classes for day-before-yesterday, yesterday, today
+	public $styles = array("info", "info", "info");
+	//public $newCases = 0;
+
 	public $lastUpdate;
 	public $metaInfo;
 
@@ -248,20 +284,47 @@ class WeeklyIncidence {
 		// dictrict name
 		$this->districtName = $results->data->$key->name;
 
-		// 7-days incidence
-		$value = (float)($results->data->$key->weekIncidence);		
-		$this->value = round($value, 1);
-
+		// // 7-days incidence
+		// $value = (float)($results->data->$key->weekIncidence);		
+		// $this->value = round($value, 1);
 		// css
-		if ($value >= 50.0) {
-			$this->css = "warning";
-		}
-		if ($value >= 100.0) {
-			$this->css = "danger";
-		}
+		// if ($value >= 50.0) {
+		// 	$this->css = "warning";
+		// }
+		// if ($value >= 100.0) {
+		// 	$this->css = "danger";
+		// }
 
-		// new cases
-		$this->newCases = $results->data->$key->delta->cases;
+		// last 3 day's 7-days incidences
+		$objArray = $results->data->$key->history;
+		// var_dump($objArray[0]);
+		// var_dump($objArray[1]);
+		// var_dump($objArray[2]);
+		//$i = 0;
+		//foreach ($objArray as $obj) {
+		for ($i=0; $i<3; $i++) {
+			// get incidence
+			$obj = $objArray[$i];
+			var_dump($obj);
+			$val = $obj->weekIncidence;	
+			echo ' $val=' . $val;
+			$inc = (float)$val;
+			$inc = round($inc, 1);
+			echo ' $inc=' . $inc;
+			$this->values[$i] = $inc;
+			if ($inc >= 50.0) {
+				$this->styles[$i] = "warning";
+			}
+			if ($inc >= 100.0) {
+				$this->styles[$i] = "danger";
+			}
+			echo ' $i=' . $i;
+			echo ' styles[$i]=' . $this->styles[$i];
+			//$i++;
+		} 
+
+		//// new cases
+		//$this->newCases = $results->data->$key->delta->cases;
 
 		// meta info
 		$a = $results->meta->lastUpdate;
@@ -281,9 +344,10 @@ class WeeklyIncidence {
 	function fetchJson() {
 		// todo: use transient if productive; think about timespan
 		//if ( false === ( $request = get_transient( 'Cov19JSON-'.$this->districtKey ) ) ) {
-			$uri = 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/';
-
-			$request = wp_remote_get( 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/' );
+			//$uri = 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/';
+			$uri = 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/history/incidence/3';
+			echo ' uri='.$uri. ' - ';
+			$request = wp_remote_get( $uri );
 			//set_transient('Cov19JSON-'.$this->districtKey,$request,120);	// 120=2 Minuten?
 		//}  
 
