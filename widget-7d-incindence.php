@@ -3,9 +3,9 @@
  * @package IncidenceWidgetPlugin
  */
 /*
-Plugin Name: Covid-19 Seven Days Incidence Widget
+Plugin Name: Current Covid-19 Weekly Incidences Widget
 Plugin URI: http://www.tenzlinger.de/covid19-7d-incidence-widget/
-Description: Plugin with widget to show current 7 days incidence of covid-19 cases in your area
+Description: Plugin with widget to show last 3 day's weekly incidences of covid-19 cases in your area
 Version: 0.0.1
 Author: p-tenz
 Author URI: http://www.tenzlinger.de/
@@ -46,8 +46,6 @@ class Covid19InzidenzAmpel extends WP_Widget {
 
 		$title = ! empty( $instance['title'] ) ? $instance['title'] : '';
 		$districtKey = ! empty( $instance['districtKey'] ) ? $instance['districtKey'] : '';
-		$link = ! empty( $instance['link'] ) ? $instance['link'] : 'Your link here';
-		$text = ! empty( $instance['text'] ) ? $instance['text'] : 'Your text here';
 	   ?>
 	   
 	   <p>
@@ -57,15 +55,6 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		<p>
 		<label for="<?php echo $this->get_field_id( 'districtKey'); ?>">Allgemeiner Gemeindeschlüssel:</label>
 		<input class="widefat" type="text" id="<?php echo $this->get_field_id( 'districtKey' ); ?>" name="<?php echo $this->get_field_name( 'districtKey' ); ?>" value="<?php echo esc_attr( $districtKey ); ?>" /></p>
-
-		
-	   <p>
-		<label for="<?php echo $this->get_field_id( 'text'); ?>">Text in the call to action box:</label>
-		<input class="widefat" type="text" id="<?php echo $this->get_field_id( 'text' ); ?>" name="<?php echo $this->get_field_name( 'text' ); ?>" value="<?php echo esc_attr( $text ); ?>" /></p>
-	   
-	   <p>
-		<label for="<?php echo $this->get_field_id( 'link'); ?>">Your link:</label>
-		<input class="widefat" type="text" id="<?php echo $this->get_field_id( 'link' ); ?>" name="<?php echo $this->get_field_name( 'link' ); ?>" value="<?php echo esc_attr( $link ); ?>" /></p>
 	   
 	   <?php
 	}
@@ -74,14 +63,10 @@ class Covid19InzidenzAmpel extends WP_Widget {
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 
-		// TODO: nur Titel und AGS (=districtKey) in Widget Einstellungen
 		$instance['title'] = strip_tags( $new_instance['title'] );
 
 		$districtKey = strip_tags( $new_instance['districtKey'] );
 		$instance['districtKey'] = strip_tags( $new_instance['districtKey'] );
-
-		$instance['text'] = strip_tags( $new_instance['text'] );
-		$instance['link'] = strip_tags( $new_instance['link'] );
 		
 		return $instance;            
    }
@@ -95,43 +80,14 @@ class Covid19InzidenzAmpel extends WP_Widget {
 
 		$weeklyInc = new WeeklyIncidence( trim($districtKey) );
 
-		//$weeklyInc = $instance['weeklyInc'];
 		$jsonResponse = $weeklyInc->jsonResponse;
 		//var_dump($jsonResponse);
 		$districtName = $weeklyInc->districtName;
-		//$value = $weeklyInc->value;
 		$values = $weeklyInc->values;
 
-		//print_r($districtName . $value);
-
 		//print_r($jsonResponse);
-		//$data = $jsonResponse->data;
-		//print_r($data);
-		// todo: check how to access property which is a number
 		//$currentDistrict = $data->$districtKey;
 		//print_r($currentDistrict);
-
-		$text = $instance['text'];
-		$link = $instance['link'];
-	
-
-		// $p1g=50;
-		// $p2g=20;
-
-		// $red = "A30303";
-		// $yellow = "F4EC00";
-		// $green = "03A350";
-
-		// $p1arr = $this->Gradient3($green,$yellow,$red,$p1g+1);
-		// $p2arr = $this->Gradient3($green,$yellow,$red,$p2g+1);
-
-		$ampelvalue1 = $weeklyInc->values[0];
-		$ampelvalue2 = $weeklyInc->values[1];
-
-		$bordercol = "000";
-
-		$ampelcol1 = 51;
-		$ampelcol2 = 21;
 
 		//output code
 		echo $args['before_widget'];
@@ -141,107 +97,48 @@ class Covid19InzidenzAmpel extends WP_Widget {
 		<?php if ( ! empty( $title ) ) {
 			echo $args['before_title'] . $title . $args['after_title'];
 		};
-		//echo '<a href="' . $link . '">' . $text . '</a></br>';
 		//echo 'AGS: ' . $districtKey . '</br>';
-		echo 'Landkreis ' . $weeklyInc->districtName . '</br>';
-		echo '7-Tage Inz.: ' . number_format($weeklyInc->value, 1) . '</br>';
-		echo 'Stand: ' . $weeklyInc->lastUpdate . '</br>';
-		//echo '<pre>' . $jsonResponse . '</pre>';
-		echo '<a href="' . $weeklyInc->metaInfo . '" target="_blank">Thank you Marlon</a>';
+		//echo 'Landkreis ' . $weeklyInc->districtName . '</br>';
+		//echo 'Stand: ' . $weeklyInc->lastUpdate . '</br>';
 		?>
-		</div>
-
-		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[2] ?>">
-			<div class="hexagon-shape">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-shape content-panel">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-content">
-				<div class="content-title"><?= number_format($weeklyInc->values[2], 1) ?></div>
-				<div class="content-sub">heute</div>
-			</div>
-		</div>
-
-		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[0] ?>">
-			<div class="hexagon-shape">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-shape content-panel">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-content">
-				<div class="content-title"><?= number_format($weeklyInc->values[0], 1) ?></div>
-				<div class="content-sub">vorgestern</div>
-			</div>
-		</div>
-
-		<div class="hexagon hexagon-with-border <?= $weeklyInc->styles[1] ?>">
-			<div class="hexagon-shape">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-shape content-panel">
-				<div class="hexagon-shape-inner">
-					<div class="hexagon-shape-inner-2"></div>
-				</div>
-			</div>
-			<div class="hexagon-content">
-				<div class="content-title"><?= number_format($weeklyInc->values[1], 1) ?></div>
-				<div class="content-sub">gestern</div>
-			</div>
-		</div>
-
 		<p>
-		heute = <?= $weeklyInc->lastUpdate ?></br>
-		<a href="<?= $weeklyInc->metaInfo ?>" target="_blank">Thank you Marlon</a>
+			Neueste drei 7-Tage-Inzindenzen im Landkreis <?= $weeklyInc->districtName ?></br>
+			Thanks to Marlon for the <a href="<?= $weeklyInc->metaInfo ?>" target="_blank">API</a>
 		</p>
 
-		<div class="container">
-  			<ol class="even">
-    			<li class='hex'>
-				</li>
-  			</ol>
-  			<ol class="odd">
-    			<li class='hex'>
-				</li>
-    			<li class='hex'>
-				</li>
-  			</ol>  
-		</div>
-
-		<!-- <div class="c197di" style="margin: auto">
-   		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="173" height="153" viewbox="-5 -5 170 148.56406460551017 ">
-
-   			<path fill="#000" d="M-5 69.28203230275508L38 -5L122 -5L165 69.28203230275508L122 143.56406460551017L38 143.56406460551017Z"></path>
-
-   			<path fill="#2aae42" d="M0 69.28203230275508L40 0L120 0L160 69.28203230275508L120 138.56406460551017L40 138.56406460551017Z"></path>
-   			<path fill="#4fba36" d="M0 69.28203230275508L160 69.28203230275508L120 138.56406460551017L40 138.56406460551017Z"></path>
-
-   			<line x1="0" y1="69" x2="160" y2="69" style="stroke:#000;stroke-width:3" />
-
-   			<text x="80" y="15" fill="black" text-anchor="middle" style="font-size:12px;" fill-opacity="0.5">Today</text>
-              <text x="80" y="132" fill="black" text-anchor="middle" style="font-size:12px;" fill-opacity="0.5">Yesterday</text>
-
-               <text x="80" y="55" fill="black" text-anchor="middle" style="font-size:28px;font-weight:bold;">
-                   <?= round($ampelvalue1,1) ?>
-              </text>
-              <text x="80" y="105" fill="black" text-anchor="middle" style="font-size:28px;font-weight:bold;">
-              <?= round($ampelvalue2,1) ?>
-              </text>
-   		</svg>
-		</div> -->
-
+		<ul id="grid" class="clear">
+        <li>
+            <div class="hexagon hidden"></div>
+        </li>
+        <li>
+            <div class="hexagon <?= $weeklyInc->styles[2] ?>">
+            <p>
+                <span class="value"><?= number_format($weeklyInc->values[2], 1) ?></span><br>
+                <span class="subtitle" title="heute"><?= $weeklyInc->dates[2] ?></span>
+            </p>
+            </div>
+        </li>
+        <li>
+            <div class="hexagon hidden"></div>
+        </li>
+        <li>
+            <div class="hexagon <?= $weeklyInc->styles[0] ?>">
+                <p>
+                <span class="value"><?= number_format($weeklyInc->values[1], 1) ?></span><br>
+                <span class="subtitle"><?= $weeklyInc->dates[1] ?></span>
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="hexagon <?= $weeklyInc->styles[0] ?>">
+                <p>
+                <span class="value"><?= number_format($weeklyInc->values[0], 1) ?></span><br>
+                <span class="subtitle"><?= $weeklyInc->dates[0] ?></span>
+                </p>
+            </div>
+        </li>
+    </ul>
+	</div>
 	
 		<?php
 		echo $args['after_widget'];
@@ -261,14 +158,12 @@ class WeeklyIncidence {
 	public $districtKey = "08111";	// Stuttgart LK als default
 	public $districtName;	// name of district
 	public $jsonResponse;	
-	public $value = 0.0;			// values of 7d incidence
-	public $css = "info";
 
 	// incidence values for day-before-yesterday, yesterday, today
 	public $values = array(0.0, 0.0, 0.0);
 	// css classes for day-before-yesterday, yesterday, today
 	public $styles = array("info", "info", "info");
-	//public $newCases = 0;
+	public $dates = array("-", "-", "-");
 
 	public $lastUpdate;
 	public $metaInfo;
@@ -284,17 +179,6 @@ class WeeklyIncidence {
 		// dictrict name
 		$this->districtName = $results->data->$key->name;
 
-		// // 7-days incidence
-		// $value = (float)($results->data->$key->weekIncidence);		
-		// $this->value = round($value, 1);
-		// css
-		// if ($value >= 50.0) {
-		// 	$this->css = "warning";
-		// }
-		// if ($value >= 100.0) {
-		// 	$this->css = "danger";
-		// }
-
 		// last 3 day's 7-days incidences
 		$objArray = $results->data->$key->history;
 		// var_dump($objArray[0]);
@@ -305,26 +189,30 @@ class WeeklyIncidence {
 		for ($i=0; $i<3; $i++) {
 			// get incidence
 			$obj = $objArray[$i];
-			var_dump($obj);
+
+			//date
+			$dateStr = $obj->date;
+			$dateParsed = strtotime($dateStr);
+			$this->dates[$i] = date("d.m.y", $dateParsed);
+
+			// incidence
 			$val = $obj->weekIncidence;	
-			echo ' $val=' . $val;
 			$inc = (float)$val;
 			$inc = round($inc, 1);
-			echo ' $inc=' . $inc;
 			$this->values[$i] = $inc;
+			
+			//style
+			if ($inc >= 0.0) {
+				$this->styles[$i] = "ok";
+			}
 			if ($inc >= 50.0) {
 				$this->styles[$i] = "warning";
 			}
 			if ($inc >= 100.0) {
 				$this->styles[$i] = "danger";
 			}
-			echo ' $i=' . $i;
-			echo ' styles[$i]=' . $this->styles[$i];
 			//$i++;
 		} 
-
-		//// new cases
-		//$this->newCases = $results->data->$key->delta->cases;
 
 		// meta info
 		$a = $results->meta->lastUpdate;
@@ -335,18 +223,16 @@ class WeeklyIncidence {
 		$this->metaInfo = $results->meta->info;
 
 		// echo "7-Tage Inzidenz: ". $this->districtName . " (" . $this->lastUpdate . ")";
-		echo '<pre>';
+		//echo '<pre>';
 		// print_r($this->value);
-		echo $a . "</br>" . $b . "</br>" . $lastUpdateDateTime . "</br>" . number_format($this->value, 1);
-		echo '</pre>';
+		//echo $a . "</br>" . $b . "</br>" . $lastUpdateDateTime . "</br>" . number_format($this->value, 1);
+		//echo '</pre>';
 	}
 
 	function fetchJson() {
 		// todo: use transient if productive; think about timespan
 		//if ( false === ( $request = get_transient( 'Cov19JSON-'.$this->districtKey ) ) ) {
-			//$uri = 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/';
 			$uri = 'https://api.corona-zahlen.org/districts/'.$this->districtKey.'/history/incidence/3';
-			echo ' uri='.$uri. ' - ';
 			$request = wp_remote_get( $uri );
 			//set_transient('Cov19JSON-'.$this->districtKey,$request,120);	// 120=2 Minuten?
 		//}  
@@ -357,52 +243,8 @@ class WeeklyIncidence {
 
 	   $body = wp_remote_retrieve_body( $request );
 
-	   // try returning as arrays
-	   //$json = json_decode( $body, true );
 	   $json = json_decode( $body );
 
 	   return $json;	
 	}
-
-	function Gradient3($from, $to1, $to2, $steps) {
-		$arr1 = $this->Gradient($from,$to1,$steps/2);
-		$arr2 = $this->Gradient($to1,$to2,$steps/2);
-		return array_merge($arr1,$arr2);
-	}
-
-	function Gradient($HexFrom, $HexTo, $ColorSteps) {
-	  $FromRGB['r'] = hexdec(substr($HexFrom, 0, 2));
-	  $FromRGB['g'] = hexdec(substr($HexFrom, 2, 2));
-	  $FromRGB['b'] = hexdec(substr($HexFrom, 4, 2));
-
-	  $ToRGB['r'] = hexdec(substr($HexTo, 0, 2));
-	  $ToRGB['g'] = hexdec(substr($HexTo, 2, 2));
-	  $ToRGB['b'] = hexdec(substr($HexTo, 4, 2));
-
-	  $StepRGB['r'] = ($FromRGB['r'] - $ToRGB['r']) / ($ColorSteps - 1);
-	  $StepRGB['g'] = ($FromRGB['g'] - $ToRGB['g']) / ($ColorSteps - 1);
-	  $StepRGB['b'] = ($FromRGB['b'] - $ToRGB['b']) / ($ColorSteps - 1);
-
-	  for($i = 0; $i <= $ColorSteps; $i++) {
-	    $RGB['r'] = floor($FromRGB['r'] - ($StepRGB['r'] * $i));
-	    $RGB['g'] = floor($FromRGB['g'] - ($StepRGB['g'] * $i));
-	    $RGB['b'] = floor($FromRGB['b'] - ($StepRGB['b'] * $i));
-
-	    if($RGB['r']<0) $RGB['r']=0;
-	    if($RGB['g']<0) $RGB['g']=0;
-	    if($RGB['b']<0) $RGB['b']=0;
-
-	    if($RGB['r']>255) $RGB['r']=255;
-	    if($RGB['g']>255) $RGB['g']=255;
-	    if($RGB['b']>255) $RGB['b']=255;
-
-	    $HexRGB['r'] = sprintf('%02x', ($RGB['r']));
-	    $HexRGB['g'] = sprintf('%02x', ($RGB['g']));
-	    $HexRGB['b'] = sprintf('%02x', ($RGB['b']));
-
-	    $GradientColors[] = implode(NULL, $HexRGB);
-	  }
-	  return $GradientColors;
-	}
-
 }
