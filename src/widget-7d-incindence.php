@@ -15,9 +15,7 @@ License: GPL2
 // security check if functions are called from Wordpress
 defined( 'ABSPATH') or die('You are not allowed to be here');
 
-/*********************************************************************************
-Enqueue stylesheet
-*********************************************************************************/
+/* Enqueue stylesheet */
 function enqueueMyStyles() {
 	// 
 	wp_register_style( 'widget_c197di_css', plugins_url( 'css/style.css', __FILE__ ) );
