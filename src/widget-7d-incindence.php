@@ -4,11 +4,11 @@
  */
 /*
 Plugin Name: Current Covid-19 Weekly Incidences Widget
-Plugin URI: http://www.tenzlinger.de/covid19-7d-incidence-widget/
+Plugin URI: https://github.com/p-tenz/widget-7d-incidence
 Description: Plugin with widget to show last 3 day's weekly incidences of covid-19 cases in your area
 Version: 0.0.1
 Author: p-tenz
-Author URI: http://www.tenzlinger.de/
+Author URI: https://github.com/p-tenz/
 License: GPL2
 */
 
