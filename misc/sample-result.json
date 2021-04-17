@@ -1,0 +1,29 @@
+{
+  "data": {
+    "08111": {
+      "ags": "08111",
+      "name": "Stuttgart",
+      "history": [
+        {
+          "weekIncidence": 158.98451198359518,
+          "date": "2021-04-13T00:00:00.000Z"
+        },
+        {
+          "weekIncidence": 183.9880109008965,
+          "date": "2021-04-14T00:00:00.000Z"
+        },
+        {
+          "weekIncidence": 197.66917068583496,
+          "date": "2021-04-15T00:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "meta": {
+    "source": "Robert Koch-Institut",
+    "contact": "Marlon Lueckert (m.lueckert@me.com)",
+    "info": "https://github.com/marlon360/rki-covid-api",
+    "lastUpdate": "2021-04-15T00:00:00.000Z",
+    "lastCheckedForUpdate": "2021-04-16T08:55:33.458Z"
+  }
+}
