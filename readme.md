@@ -9,6 +9,7 @@ Die Farben sind abhängig vom Inzidenzwert
 - grün: unter 50
 - gelb: zwischen 50 und 100
 - rot: über 100
+- lila: über 200
 
 Die Einstellungen im Wordpress Backend sind ganz einfach: einmal der Titel für das Widget und dann der gewünschte Landkreis (District):
 
@@ -21,7 +22,15 @@ Die Hexagons habe ich mit dem Tutorial von [CodeSmite](https://www.codesmite.com
 
 ## Bekannte Probleme
 
-- bisher keine Fehlerbehandlung
-- Landkreise unsortiert
 - Werte werden nicht gecacht, obwohl sie sich nur einmal am Tag ändern
 - unsichbare Hexagons links und rechts
+- Schriftgröße bei Tablet Size
+
+## Installation
+
+1. im Wordpress Ordner unter `wp-content/plugins` einen Ordner namens `widget-7d-incidence` erstellen
+2. dort den Inhalt des Github Ordners [`src`](src) einfügen, also die Datei `widget-7d-incidence.php`, den Unterordnert `css` und dessen Inhalt `style.css`
+3. im Wordpress Backend unter installierte Plugins das Plugin aktivieren
+4. unter **Design -> Widgets** das Widget zur Seitenleiste hinzufügen, Titel und Landkreis einstellen
+
+   Bingo!
